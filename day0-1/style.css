@@ -76,11 +76,11 @@ header {
 .content-container .description {
   line-height: 32px;
 }
-.btn-container {
+.button-container {
   display: flex;
   margin-bottom: 80px;
 }
-.btn {
+.button {
   background-color: #6d1600;
   color: white;
   font-family: "Playfair Display SC", serif;
@@ -125,15 +125,15 @@ header {
   .images-container {
     display: none;
   }
-  .btn {
+  .button {
     font-size: 16px;
     padding: 16px 32px;
   }
-  .btn-icon {
+  .button-icon {
     width: 24px;
     height: 24px;
   }
-  .btn-container {
+  .button-container {
     margin-bottom: 24px;
   }
 }
@@ -227,23 +227,23 @@ header {
   align-items: center;
   gap: 40px;
 }
-.multibtn-container {
+.multibutton-container {
   background-color: #f6f6f6;
   width: fit-content;
   padding: 8px;
   border-radius: 40px;
 }
-.item-btn {
+.item-button {
   padding: 16px 40px;
 }
-.btn-1 {
+.button-1 {
   background-color: white;
   border: none;
   border-radius: 40px;
   gap: 10;
   opacity: 0.7;
 }
-.btn-2 {
+.button-2 {
   border: none;
   background-color: transparent;
   opacity: 0.7;
@@ -301,7 +301,7 @@ header {
   font-weight: 700;
   opacity: 0.7;
 }
-.price-container .add-btn {
+.price-container .add-button {
   border-radius: 8px;
   border: none;
   background-color: transparent;
@@ -327,15 +327,15 @@ header {
   .products-section .group-container {
     gap: 24px;
   }
-  .multibtn-container {
+  .multibutton-container {
     padding: 4px;
     border-radius: 40px;
   }
-  .item-btn {
+  .item-button {
     padding: 12px;
     font-size: 14px;
   }
-  .btn-1, .btn-2 {
+  .button-1, .button-2 {
     border-radius: 40px;
   }
   .products-container {
@@ -370,7 +370,7 @@ header {
   .price-container .price {
     font-size: 16px;
   }
-  .price-container .add-btn {
+  .price-container .add-button {
     border-radius: 8px;
     padding: 12px;
   }
@@ -384,7 +384,7 @@ header {
   .products-section hr {
     margin-top: 40px;
   }
-  .add-btn {
+  .add-button {
     padding: 0px;
   }
   .products-section hr {
@@ -452,7 +452,7 @@ header {
     gap: 24px;
     text-align: center;
   }
-  .about-info .btn {
+  .about-info .button {
     margin: auto;
   }
   .about-info p {
@@ -597,14 +597,14 @@ header {
   font-weight: 600;
   line-height: 32px;
 }
-.blog-btn {
+.blog-button {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 8px;
 
 }
-.blog-btn a {
+.blog-button a {
   font-size: 16px;
 }
 
@@ -635,10 +635,10 @@ header {
     font-size: 16px;
     line-height: 24px;
   }
-  .blog-btn {
+  .blog-button {
     gap: 4px;
   }
-  .blog-btn a {
+  .blog-button a {
     font-size: 14px; 
   }
   .blog-info p {
@@ -661,7 +661,7 @@ footer {
 }
 .footer-container {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   gap: 80px;
   max-width: 100%;
 }
@@ -674,7 +674,7 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 32px;
-  width: 100%;
+  width: 40%;
 }
 .company-info p {
   font-size: 20px;
@@ -738,7 +738,7 @@ footer {
   border: none;
   background-color: transparent;
 }
-.subs-btn {
+.subs-button {
   background-color: #6d1600;
   color: white;
   border: none;
@@ -777,7 +777,7 @@ footer {
     line-height: 20px;
     text-align: center;
   }
-  .company-desc, .links, .social-icon {
+  .company-description, .links, .social-icon {
     display: none;
   }
   .footer-links {
@@ -803,7 +803,7 @@ footer {
   .input-group svg {
     width: 20px;
   }
-  .subs-btn {
+  .subs-button {
     font-size: 12px;
     padding: 8px 16px;
   }
