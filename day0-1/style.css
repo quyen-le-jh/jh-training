@@ -145,6 +145,7 @@ header {
   justify-content: space-between;
   padding: 80px;
   gap: 40px;
+  max-width: 100%;
 }
 .social-item {
   max-width: fit-content;
@@ -175,6 +176,7 @@ header {
   .social-container {
     flex-wrap: wrap;
     padding: 36px 24px;
+    justify-content: center;
   }
   .social-item {
     max-width: 100%;
@@ -355,8 +357,8 @@ header {
     font-size: 12px;
   }
   .star {
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
   }
   .reviews {
     font-size: 11px;
@@ -381,6 +383,12 @@ header {
   }
   .products-section hr {
     margin-top: 40px;
+  }
+  .add-btn {
+    padding: 0px;
+  }
+  .products-section hr {
+    margin-top: 24px;
   }
 }
 
@@ -460,6 +468,348 @@ header {
 }
 
 /* REVIEW-SECTION */
+
+.reviews-section {
+  padding: 0 80px 80px 80px;
+}
+.reviews-container {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  max-width: 100%;
+}
+.review-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 40px;
+  width: 33%;
+}
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.review-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.review-img img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.review-text p {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 28px;
+}
+.reviews-section hr {
+  margin-top: 80px;
+}
+
+@media screen and (max-width: 768px) {
+  .reviews-section {
+    padding: 36px 36px 0 36px;
+  }
+  .reviews-container {
+    flex-direction: column;
+    gap: 0px;
+    max-width: 100%;
+  }
+  .review-card {
+    width: fit-content;
+    padding: 24px 16px;
+    gap: 8px;
+  }
+  .review-img img {
+    width: 50px;
+    height: 50px;
+  }
+  .review-info {
+    gap: 0px;
+  }
+  .review-info .review-name {
+    font-size: 14px;
+  }
+  .review-info .star-icon {
+    width: 80px;
+  }
+  .review-text p {
+    font-size: 13px;
+    line-height: 20px;
+  }
+  .reviews-section hr {
+    margin-top: 18px;
+  }
+}
+
+/* BLOGS-SECTION */
+
+.blogs-section {
+  padding: 0 80px 80px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+}
+.blogs-section .title-container {
+  margin-bottom: 0;
+}
+.blogs-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+}
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 0 96px 0 40px;
+  width: 33%;
+}
+.blog-img img {
+  border-radius: 0 80px;
+  width: 100%;
+  object-fit: cover;
+}
+.blog-info {
+  display: flex;
+  justify-content: space-between;
+}
+.blog-info p {
+  font-size: 14px;
+  font-weight: 400;
+}
+.blog-author, .blog-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.blog-text p {
+  font-family: "Plus Jakarta Sans", serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+}
+.blog-btn {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+
+}
+.blog-btn a {
+  text-decoration: none;
+  font-size: 16px;
+}
+
+@media screen and (max-width: 768px) {
+  .blogs-section {
+    padding: 36px;
+    gap: 36px;
+    max-width: 100%;
+  }
+  .blogs-container {
+    width: 100%;
+  }
+  .blog-card {
+    width: 100%;
+    padding: 16px;
+    gap: 8px;
+    border-radius: 0 96px 0 40px;
+  }
+  .blog-2 {
+    display: none;
+  }
+  .blog-img img {
+    border-radius: 0 80px;
+    width: 100%;
+    object-fit: cover;
+  }
+  .blog-text p {
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .blog-btn {
+    gap: 4px;
+  }
+  .blog-btn a {
+    font-size: 14px; 
+  }
+  .blog-info p {
+    font-size: 12px;
+    font-weight: 400;
+  }
+  .blog-author, .blog-date {
+    gap: 4px;
+  }
+}
+
+/* FOOTER */
+
+footer {
+  background-color: #282a3a;
+  padding: 80px;
+}
+.footer-container p, .footer-container h2 {
+  color: #ffffff;
+}
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 80px;
+  max-width: 100%;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.company-info {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+}
+.company-info p {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 32px;
+}
+.logo-container p {
+  font-size: 48px;
+  font-weight: 600;
+}
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+}
+.links-container {
+  display: flex;
+  justify-content: space-between;
+}
+.links-group {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.social-icon {
+  display: flex;
+  gap: 8px;
+  opacity: 0.7;
+}
+.sub-title {
+  font-family: "Playfair Display", serif;
+  font-size: 28px;
+  font-weight: 400;
+}
+.subscribe-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 8px 8px 8px 24px;
+  border-radius: 16px;
+}
+.input-group .group-icon {
+  display: flex;
+  gap: 8px;
+}
+.input-group input {
+  border: none;
+  background-color: transparent;
+}
+.subs-btn {
+  background-color: #6d1600;
+  color: white;
+  border: none;
+  padding: 16px 64px;
+  font-size: 20px;
+  font-weight: 400;
+  border-radius: 8px;
+}
+@media screen and (max-width: 768px) {
+  footer {
+    padding: 36px;
+  }
+  .footer-container {
+    flex-direction: column;
+    gap: 10px;
+    max-width: 100%;
+  }
+  .company-info {
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+  }
+  .logo-container {
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+  }
+  .logo-container svg {
+    width: 40px;
+  }
+  .logo-container p {
+    font-size: 24px;
+  }
+  p.contact-info {
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+  }
+  .company-desc, .links, .social-icon {
+    display: none;
+  }
+  .footer-links {
+    gap: 24px;
+  }
+  .links-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .links-group {
+    gap: 16px;
+  }
+  .sub-title {
+    font-size: 16px;
+    margin: auto;
+  }
+  .subscribe-container {
+    max-width: 100%;
+  }
+  .input-group input {
+    font-size: 12px;
+  }
+  .input-group svg {
+    width: 20px;
+  }
+  .subs-btn {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+}
+
+
 
 
 
