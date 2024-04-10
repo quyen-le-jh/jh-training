@@ -1,21 +1,18 @@
+// function isValidPassword(password) {
+//   if (
+//     password.length < 8 ||
+//     !/[A-Z]/.test(password) ||
+//     !/\d/.test(password) ||
+//     !/[^A-Za-z0-9]/.test(password)
+//   ) {
+//     return false;
+//   }
+
+//   return true;
+// }
+
 function isValidPassword(password) {
-  if (password.length < 8) {
-    return false;
-  }
-
-  if (!/[A-Z]/.test(password)) {
-    return false;
-  }
-
-  if (!/\d/.test(password)) {
-    return false;
-  }
-
-  if (!/[^A-Za-z0-9]/.test(password)) {
-    return false;
-  }
-
-  return true;
+  return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(password);
 }
 
 let password = "Pquyen02@";
