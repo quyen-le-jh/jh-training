@@ -1,26 +1,56 @@
 body {
-    margin: 0;
-    padding: 0;
-  }
-  #map {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-  }
-  .marker {
-    background-image: url("assets/map-marker.png");
-    background-size: cover;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-  .mapboxgl-popup {
-    max-width: 200px;
-  }
-  .mapboxgl-popup-content {
-    text-align: center;
-    font-family: "Open Sans", sans-serif;
-  }
-  
+  margin: 0;
+  padding: 0;
+}
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: -1;
+}
+.marker {
+  background-image: url("assets/map-marker.png");
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.mapboxgl-popup {
+  max-width: 200px;
+}
+.mapboxgl-popup-content {
+  text-align: center;
+  font-family: "Open Sans", sans-serif;
+}
+#location-input {
+  width: 25%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  z-index: 1;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+#location-list {
+  width: 25%;
+  list-style: none;
+  z-index: 1;
+  position: absolute;
+  top: 50px;
+  left: 20px;
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 0 10px;
+}
+#location-list li {
+  padding: 10px;
+  cursor: pointer;
+}
+#location-list li:hover {
+  background-color: lightgray;
+  border-radius: 10px;
+}

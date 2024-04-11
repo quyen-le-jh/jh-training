@@ -1,11 +1,27 @@
 mapboxgl.accessToken =
   "pk.eyJ1IjoiaGVuLW5ndXllbi1qaCIsImEiOiJjbHVnb2RnZHMyMGRvMmtueTdnZGhpYzg3In0.yyk3sh5xRg4IvYL6LZ92Ug";
+
+const apiURL = "https://api.mapbox.com/geocoding/v5/mapbox.places/";
+
 const map = new mapboxgl.Map({
   container: "map",
   style: "mapbox://styles/mapbox/light-v10",
 
   center: [-96, 37.8],
   zoom: 4,
+});
+
+map.on("load", () => {
+  map.addControl(new mapboxgl.NavigationControl());
+  map.addControl(
+    new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true,
+      },
+      trackUserLocation: true,
+      showUserHeading: true,
+    })
+  );
 });
 
 const geojson = {
@@ -58,45 +74,91 @@ const geojson = {
   ],
 };
 
-// add markers to map
 for (const feature of geojson.features) {
-  // create a HTML element for each feature
   const el = document.createElement("div");
   el.className = "marker";
 
-  // make a marker for each feature and add to the map
   new mapboxgl.Marker(el)
     .setLngLat(feature.geometry.coordinates)
     .setPopup(
-      new mapboxgl.Popup({ offset: 25 }) // add popups
-        .setHTML(
-          `<h3>${feature.properties.title}</h3><p>${feature.properties.description}</p>`
-        )
+      new mapboxgl.Popup({ offset: 25 }).setHTML(
+        `<h3>${feature.properties.title}</h3><p>${feature.properties.description}</p>`
+      )
     )
     .addTo(map);
 }
 
-const searchJS = document.getElementById("search-js");
-searchJS.onload = function () {
-  const searchBox = new MapboxSearchBox();
-  searchBox.accessToken = mapboxgl.accessToken;
-  searchBox.options = {
-    types: "address,poi",
-    proximity: [-73.99209, 40.68933],
-  };
-  searchBox.marker = true;
-  searchBox.placeholder = "Enter the location...";
-  searchBox.mapboxgl = mapboxgl;
+const locationInput = document.getElementById("location-input");
+const locationList = document.getElementById("location-list");
 
-  map.addControl(searchBox);
-  map.addControl(new mapboxgl.NavigationControl());
-  map.addControl(
-    new mapboxgl.GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true,
-      },
-      trackUserLocation: true,
-      showUserHeading: true,
-    })
-  );
-};
+locationInput.addEventListener("input", debounce(handleInput, 300));
+
+function handleInput() {
+  const query = locationInput.value.trim();
+
+  if (query.length === 0) {
+    clearSuggestions();
+    return;
+  }
+
+  fetchLocations(query).then(displaySuggestions);
+}
+
+async function fetchLocations(query) {
+  const url = `${apiURL}${encodeURIComponent(query)}.json?access_token=${
+    mapboxgl.accessToken
+  }`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Cannot fetch locations");
+    }
+    const data = await response.json();
+    return data.features;
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    return [];
+  }
+}
+
+function displaySuggestions(locations) {
+  clearSuggestions();
+
+  locations.forEach((location) => {
+    const name = location.place_name;
+    const li = document.createElement("li");
+    li.textContent = name;
+    li.addEventListener("click", () => {
+      locationInput.value = name;
+      zoomToLocation(location);
+      clearSuggestions();
+    });
+    locationList.appendChild(li);
+  });
+}
+
+function zoomToLocation(location) {
+  const coordinates = location.center;
+  const zoom = 12;
+
+  map.flyTo({
+    center: coordinates,
+    zoom: zoom,
+  });
+  new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+}
+
+function clearSuggestions() {
+  locationList.innerHTML = "";
+}
+
+function debounce(func, delay) {
+  let timeoutId;
+  return function () {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(this, arguments);
+    }, delay);
+  };
+}
