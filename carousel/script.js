@@ -6,9 +6,22 @@ const imageSources = [
   "assets/product-2.jpeg",
 ];
 
-document.getElementById("main-image").setAttribute("src", imageSources[0]);
-
+const mainImage = document.getElementById("main-image");
 const imageList = document.getElementById("image-list");
+const nextButton = document.getElementById("next");
+const previousButton = document.getElementById("previous");
+
+function initialize() {
+  mainImage.setAttribute("src", imageSources[0]);
+
+  for (let i = 0; i < imageSources.length; i++) {
+    document.getElementById("img-" + i).addEventListener("click", () => {
+      removeActiveImage(imageSources);
+      mainImage.setAttribute("src", imageSources[i]);
+      document.getElementById("img-" + i).classList.add("active");
+    });
+  }
+}
 
 imageSources.forEach((source) => {
   const img = document.createElement("img");
@@ -28,42 +41,35 @@ function removeActiveImage(arr) {
   }
 }
 
-for (let i = 0; i < imageSources.length; i++) {
-  document.getElementById("img-" + i).addEventListener("click", () => {
-    removeActiveImage(imageSources);
-    document.getElementById("main-image").setAttribute("src", imageSources[i]);
-    document.getElementById("img-" + i).classList.add("active");
-  });
-}
-
-function nextImg() {
-  let img = document.getElementById("main-image");
+function nextImage() {
   removeActiveImage(imageSources);
-  let index = imageSources.indexOf(img.getAttribute("src"));
+  let index = imageSources.indexOf(mainImage.getAttribute("src"));
 
   if (index == imageSources.length - 1) {
-    img.setAttribute("src", imageSources[0]);
+    mainImage.setAttribute("src", imageSources[0]);
     document.getElementById("img-0").classList.add("active");
   } else {
-    img.setAttribute("src", imageSources[index + 1]);
+    mainImage.setAttribute("src", imageSources[index + 1]);
     document.getElementById("img-" + (index + 1)).classList.add("active");
   }
 }
 
-function previousImg() {
-  let img = document.getElementById("main-image");
+function previousImage() {
   removeActiveImage(imageSources);
-  let index = imageSources.indexOf(img.getAttribute("src"));
+  let index = imageSources.indexOf(mainImage.getAttribute("src"));
+
   if (index == 0) {
-    img.setAttribute("src", imageSources[imageSources.length - 1]);
+    mainImage.setAttribute("src", imageSources[imageSources.length - 1]);
     document
       .getElementById("img-" + (imageSources.length - 1))
       .classList.add("active");
   } else {
-    img.setAttribute("src", imageSources[index - 1]);
+    mainImage.setAttribute("src", imageSources[index - 1]);
     document.getElementById("img-" + (index - 1)).classList.add("active");
   }
 }
 
-document.getElementById("next").addEventListener("click", nextImg);
-document.getElementById("previous").addEventListener("click", previousImg);
+nextButton.addEventListener("click", nextImage);
+previousButton.addEventListener("click", previousImage);
+
+initialize();

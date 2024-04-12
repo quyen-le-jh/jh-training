@@ -46,6 +46,8 @@ const cancelEditButton = document.getElementById("cancel-edit");
 const questionIdInput = document.getElementById("question-id");
 const questionTextInput = document.getElementById("question-text");
 const questionDisplayInput = document.getElementById("question-display");
+const questionTextEdit = document.getElementById("question-text-edit");
+const questionDisplayEdit = document.getElementById("question-display-edit");
 
 const history = [];
 let currentId = "question1";
@@ -55,7 +57,7 @@ function renderQuestion(questionId) {
   currentId = questionId;
 
   if (!question) {
-    console.log("Not found");
+    alert("Not found");
     return;
   }
 
@@ -73,7 +75,7 @@ function renderQuestion(questionId) {
   });
 
   if (history.length > 0) {
-    backButton.style.display = " block";
+    backButton.style.display = "block";
   } else {
     backButton.style.display = "none";
   }
@@ -101,11 +103,9 @@ function addQuestion() {
     return;
   }
 
-  for (let question in questions) {
-    if (questions[newQuestionId]) {
-      alert("Question already exists");
-      return;
-    }
+  if (questions[newQuestionId]) {
+    alert("Question already exists");
+    return;
   }
 
   questions[newQuestionId] = new Question(newQuestionText, []);
@@ -129,15 +129,22 @@ function showEditForm(questionId) {
   editForm.style.display = "block";
   const question = questions[questionId];
   if (question) {
-    questionText.value = question.text;
+    questionTextEdit.value = question.text;
   }
 }
 
 function editQuestion() {
   const question = questions[currentId];
+  const previousQuestionId = history[history.length - 1];
+
   if (question) {
-    question.text = questionText.value;
-    renderQuestion(currentId);
+    question.text = questionTextEdit.value;
+    questions[previousQuestionId].answers.forEach((answer) => {
+      if (answer.nextQuestion === currentId) {
+        answer.text = questionDisplayEdit.value;
+      }
+    });
+    renderQuestion(previousQuestionId);
     editForm.style.display = "none";
   }
 }
