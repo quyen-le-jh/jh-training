@@ -15,18 +15,18 @@
           <button id="delete">Delete</button>
         </div>
         <h2 id="question"></h2>
-        <ul id="answers"></ul>
+        <div id="answers"></div>
         <button id="back">Back</button>
       </div>
 
       <div id="add-form">
         <h3>Add Answer</h3>
-        <input type="text" id="question-id" placeholder="Question ID" />
-        <input type="text" id="question-text" placeholder="Question Text" />
+        <input type="text" id="answer-id" placeholder="Answer ID" />
+        <input type="text" id="answer-text" placeholder="Answer Text" />
         <input
           type="text"
-          id="question-display"
-          placeholder="Question Display"
+          id="next-question-id"
+          placeholder="Next Question ID"
         />
         <div class="button-container">
           <button type="submit" id="add-button">Add</button>
@@ -36,16 +36,7 @@
 
       <div id="edit-form">
         <h3>Edit Question</h3>
-        <input
-          type="text"
-          id="question-text-edit"
-          placeholder="Question Text"
-        />
-        <input
-          type="text"
-          id="question-display-edit"
-          placeholder="Question Display"
-        />
+        <input type="text" id="question-text" placeholder="Question Text" />
         <div class="button-container">
           <button type="submit" id="save">Save</button>
           <button type="button" id="cancel-edit">Cancel</button>

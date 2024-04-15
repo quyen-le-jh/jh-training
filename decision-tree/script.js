@@ -1,38 +1,54 @@
 class Question {
-  constructor(text, answers) {
+  constructor(id, text, answers, previousAnswer) {
+    this.id = id;
     this.text = text;
     this.answers = answers;
+    this.previousAnswer = previousAnswer;
+  }
+}
+
+class Answer {
+  constructor(id, text, nextQuestion) {
+    this.id = id;
+    this.text = text;
+    this.nextQuestion = nextQuestion;
   }
 }
 
 const questions = {
-  question1: new Question("Choose a number?", [
-    { text: "1", nextQuestion: "question2a" },
-    { text: "2", nextQuestion: "question2b" },
-    { text: "3", nextQuestion: "question2c" },
-  ]),
-  question2a: new Question("You chose 1. Choose other number?", [
-    { text: "1.1", nextQuestion: "question3a" },
-    { text: "1.2", nextQuestion: "question3b" },
-  ]),
-  question2b: new Question("You chose 2. Choose other number", [
-    { text: "2.1", nextQuestion: "question3c" },
-    { text: "2.2", nextQuestion: "question3d" },
-  ]),
-  question2c: new Question("You chose 3. Choose other number?", [
-    { text: "3.1", nextQuestion: "question3e" },
-    { text: "3.2", nextQuestion: "question3f" },
-  ]),
-  question3a: new Question("You chose 1.1."),
-  question3b: new Question("You chose 1.2."),
-  question3c: new Question("You chose 2.1."),
-  question3d: new Question("You chose 2.2."),
-  question3e: new Question("You chose 3.1."),
-  question3f: new Question("You chose 3.2."),
+  1: new Question(
+    1,
+    "Is it sunny today?",
+    [new Answer(1, "Yes", 2), new Answer(2, "No", 3)],
+    null
+  ),
+  2: new Question(
+    2,
+    "Are you going for a picnic?",
+    [new Answer(1, "Yes", 4), new Answer(2, "No", 5)],
+    1
+  ),
+  3: new Question(
+    3,
+    "Are you staying indoors?",
+    [new Answer(1, "Yes", 6), new Answer(2, "No", 7)],
+    1
+  ),
+  4: new Question(4, "You chose go for a picnic", null, 2),
+  5: new Question(5, "You should ask your friend to go shopping", null, 2),
+  6: new Question(
+    6,
+    "Do you live alone or with family?",
+    [new Answer(1, "Live alone", 8), new Answer(2, "With family", 9)],
+    3
+  ),
+  7: new Question(7, "You can call your friend", null, 3),
+  8: new Question(8, "You should watch TV", null, 6),
+  9: new Question(9, "You should cooking with family", null, 6),
 };
 
 const questionElement = document.getElementById("question");
-const answerElement = document.getElementById("answers");
+const answersElement = document.getElementById("answers");
 const backButton = document.getElementById("back");
 const addElement = document.getElementById("add");
 const editElement = document.getElementById("edit");
@@ -43,38 +59,42 @@ const saveElement = document.getElementById("save");
 const addButton = document.getElementById("add-button");
 const cancelAddButton = document.getElementById("cancel-add");
 const cancelEditButton = document.getElementById("cancel-edit");
-const questionIdInput = document.getElementById("question-id");
-const questionTextInput = document.getElementById("question-text");
-const questionDisplayInput = document.getElementById("question-display");
-const questionTextEdit = document.getElementById("question-text-edit");
-const questionDisplayEdit = document.getElementById("question-display-edit");
+const answerIdInput = document.getElementById("answer-id");
+const answerTextInput = document.getElementById("answer-text");
+const nextQuestionIdInput = document.getElementById("next-question-id");
+const questionText = document.getElementById("question-text");
 
-const history = [];
-let currentId = "question1";
+let currentQuestionId = questions[1].id;
+let recentlyAddedAnswerId = 0;
 
 function renderQuestion(questionId) {
-  const question = questions[questionId];
-  currentId = questionId;
+  let currentQuestion = questions[questionId];
 
-  if (!question) {
-    alert("Not found");
-    return;
+  if (!currentQuestion) {
+    console.log(recentlyAddedAnswerId);
+    currentQuestion = new Question(
+      questionId,
+      "Question " + questionId,
+      [],
+      recentlyAddedAnswerId
+    );
+    questions[currentQuestionId] = currentQuestion;
   }
 
-  questionElement.innerText = question.text;
-  answerElement.innerHTML = "";
+  questionElement.innerText = currentQuestion.text;
+  answersElement.innerHTML = "";
 
-  question.answers.forEach((answer) => {
+  currentQuestion.answers.forEach((answer) => {
     const button = document.createElement("button");
-    button.innerText = answer.text;
+    button.textContent = answer.text;
     button.addEventListener("click", () => {
-      history.push(questionId);
+      currentQuestionId = answer.nextQuestion;
       renderQuestion(answer.nextQuestion);
     });
-    answerElement.appendChild(button);
+    answersElement.appendChild(button);
   });
 
-  if (history.length > 0) {
+  if (currentQuestionId !== 1) {
     backButton.style.display = "block";
   } else {
     backButton.style.display = "none";
@@ -82,9 +102,9 @@ function renderQuestion(questionId) {
 }
 
 function handleBackButtonClick() {
-  if (history.length > 0) {
-    const previousQuestionId = history.pop();
-    renderQuestion(previousQuestionId);
+  if (currentQuestionId !== 1) {
+    currentQuestionId = questions[currentQuestionId].previousAnswer;
+    renderQuestion(currentQuestionId);
   }
 }
 
@@ -94,28 +114,29 @@ function showAddForm() {
 }
 
 function addQuestion() {
-  const newQuestionId = questionIdInput.value;
-  const newQuestionText = questionTextInput.value;
-  const textDisplay = questionDisplayInput.value;
+  const newAnswerId = answerIdInput.value;
+  const newAnswerText = answerTextInput.value;
+  const nextQuestionId = nextQuestionIdInput.value;
 
-  if (newQuestionId === "" || newQuestionText === "" || textDisplay === "") {
+  if (newAnswerId === "" || newAnswerText === "" || nextQuestionId === "") {
     alert("Please fill in all fields");
     return;
   }
 
-  if (questions[newQuestionId]) {
+  if (questions[nextQuestionId]) {
     alert("Question already exists");
     return;
   }
 
-  questions[newQuestionId] = new Question(newQuestionText, []);
-
-  questions[currentId].answers.push({
-    text: textDisplay,
-    nextQuestion: newQuestionId,
+  questions[currentQuestionId].answers.push({
+    id: newAnswerId,
+    text: newAnswerText,
+    nextQuestion: nextQuestionId,
   });
 
-  renderQuestion(currentId);
+  recentlyAddedAnswerId = currentQuestionId;
+
+  renderQuestion(currentQuestionId);
   addForm.style.display = "none";
   resetForm();
 }
@@ -124,52 +145,46 @@ function handleAddButtonClick() {
   showAddForm();
 }
 
-function showEditForm(questionId) {
+function showEditForm() {
   addForm.style.display = "none";
   editForm.style.display = "block";
-  const question = questions[questionId];
-  if (question) {
-    questionTextEdit.value = question.text;
+
+  if (currentQuestionId) {
+    questionText.value = questions[currentQuestionId].text;
   }
 }
 
 function editQuestion() {
-  const question = questions[currentId];
-  const previousQuestionId = history[history.length - 1];
-
-  if (question) {
-    question.text = questionTextEdit.value;
-    questions[previousQuestionId].answers.forEach((answer) => {
-      if (answer.nextQuestion === currentId) {
-        answer.text = questionDisplayEdit.value;
-      }
-    });
-    renderQuestion(previousQuestionId);
+  if (currentQuestionId) {
+    questions[currentQuestionId].text = questionText.value;
+    renderQuestion(currentQuestionId);
     editForm.style.display = "none";
+    alert("Question edited successfully");
   }
 }
 
 function handleEditButtonClick() {
-  showEditForm(currentId);
+  showEditForm();
 }
 
 function deleteQuestion() {
   if (confirm("Are you sure you want to delete this question?") === true) {
-    if (currentId === "question1") {
+    if (currentQuestionId === 1) {
       alert("You cannot delete the root question.");
     }
 
-    const previousQuestionId = history[history.length - 1];
+    const previousAnswer = questions[currentQuestionId].previousAnswer;
 
-    for (let answer in questions[previousQuestionId].answers) {
+    for (let answer in questions[currentQuestionId].answers) {
       if (
-        questions[previousQuestionId].answers[answer].nextQuestion === currentId
+        questions[previousAnswer].answers[answer].nextQuestion ===
+        currentQuestionId
       ) {
-        delete questions[previousQuestionId].answers[answer];
+        delete questions[previousAnswer].answers[answer];
       }
     }
-    delete questions[currentId];
-    renderQuestion(previousQuestionId || "question1");
+    delete questions[currentQuestionId];
+    renderQuestion(previousAnswer || 1);
   }
 }
 
@@ -178,22 +193,22 @@ function handleDeleteButtonClick() {
 }
 
 function resetForm() {
-  questionIdInput.value = "";
-  questionTextInput.value = "";
-  questionDisplayInput.value = "";
+  answerIdInput.value = "";
+  answerTextInput.value = "";
+  nextQuestionIdInput.value = "";
 }
 
 backButton.addEventListener("click", handleBackButtonClick);
 addElement.addEventListener("click", handleAddButtonClick);
-editElement.addEventListener("click", handleEditButtonClick);
-deleteElement.addEventListener("click", handleDeleteButtonClick);
-saveElement.addEventListener("click", editQuestion);
 addButton.addEventListener("click", addQuestion);
 cancelAddButton.addEventListener("click", () => {
   addForm.style.display = "none";
 });
+editElement.addEventListener("click", handleEditButtonClick);
+saveElement.addEventListener("click", editQuestion);
 cancelEditButton.addEventListener("click", () => {
   editForm.style.display = "none";
 });
+deleteElement.addEventListener("click", handleDeleteButtonClick);
 
-renderQuestion("question1");
+renderQuestion(1);
