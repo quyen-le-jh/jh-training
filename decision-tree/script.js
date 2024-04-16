@@ -100,7 +100,9 @@ function renderQuestion(questionId) {
   }
 }
 
-function handleBackButtonClick() {
+function handleBackButtonClick(event) {
+  event.stopPropagation();
+
   if (currentQuestionId !== 1) {
     currentQuestionId = findQuestionById(currentQuestionId).previousAnswer;
     renderQuestion(currentQuestionId);
@@ -112,7 +114,9 @@ function showAddForm() {
   editForm.style.display = "none";
 }
 
-function addQuestion() {
+function addAnswer(event) {
+  event.stopPropagation();
+
   const newAnswerId = answerIdInput.value;
   const newAnswerText = answerTextInput.value;
   const nextQuestionId = nextQuestionIdInput.value;
@@ -122,7 +126,7 @@ function addQuestion() {
     return;
   }
 
-  if (questions[nextQuestionId]) {
+  if (findQuestionById(nextQuestionId)) {
     alert("Question already exists");
     return;
   }
@@ -138,7 +142,9 @@ function addQuestion() {
   resetForm();
 }
 
-function handleAddButtonClick() {
+function handleAddButtonClick(event) {
+  event.stopPropagation();
+
   showAddForm();
 }
 
@@ -186,7 +192,9 @@ function deleteQuestion() {
   }
 }
 
-function handleDeleteButtonClick() {
+function handleDeleteButtonClick(event) {
+  event.stopPropagation();
+
   deleteQuestion();
 }
 
@@ -202,13 +210,15 @@ function resetForm() {
 
 backButton.addEventListener("click", handleBackButtonClick);
 addElement.addEventListener("click", handleAddButtonClick);
-addButton.addEventListener("click", addQuestion);
-cancelAddButton.addEventListener("click", () => {
+addButton.addEventListener("click", addAnswer);
+cancelAddButton.addEventListener("click", (event) => {
+  event.stopPropagation();
   addForm.style.display = "none";
 });
 editElement.addEventListener("click", handleEditButtonClick);
 saveElement.addEventListener("click", editQuestion);
-cancelEditButton.addEventListener("click", () => {
+cancelEditButton.addEventListener("click", (event) => {
+  event.stopPropagation();
   editForm.style.display = "none";
 });
 deleteElement.addEventListener("click", handleDeleteButtonClick);
