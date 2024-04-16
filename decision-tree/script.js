@@ -15,37 +15,37 @@ class Answer {
   }
 }
 
-const questions = {
-  1: new Question(
+const questions = [
+  new Question(
     1,
     "Is it sunny today?",
     [new Answer(1, "Yes", 2), new Answer(2, "No", 3)],
     null
   ),
-  2: new Question(
+  new Question(
     2,
     "Are you going for a picnic?",
     [new Answer(1, "Yes", 4), new Answer(2, "No", 5)],
     1
   ),
-  3: new Question(
+  new Question(
     3,
     "Are you staying indoors?",
     [new Answer(1, "Yes", 6), new Answer(2, "No", 7)],
     1
   ),
-  4: new Question(4, "You chose go for a picnic", null, 2),
-  5: new Question(5, "You should ask your friend to go shopping", null, 2),
-  6: new Question(
+  new Question(4, "You chose go for a picnic", [], 2),
+  new Question(5, "You should ask your friend to go shopping", [], 2),
+  new Question(
     6,
     "Do you live alone or with family?",
     [new Answer(1, "Live alone", 8), new Answer(2, "With family", 9)],
     3
   ),
-  7: new Question(7, "You can call your friend", null, 3),
-  8: new Question(8, "You should watch TV", null, 6),
-  9: new Question(9, "You should cooking with family", null, 6),
-};
+  new Question(7, "You can call your friend", [], 3),
+  new Question(8, "You should watch TV", [], 6),
+  new Question(9, "You should cooking with family", [], 6),
+];
 
 const questionElement = document.getElementById("question");
 const answersElement = document.getElementById("answers");
@@ -64,21 +64,20 @@ const answerTextInput = document.getElementById("answer-text");
 const nextQuestionIdInput = document.getElementById("next-question-id");
 const questionText = document.getElementById("question-text");
 
-let currentQuestionId = questions[1].id;
 let recentlyAddedAnswerId = 0;
+let currentQuestionId = 1;
 
 function renderQuestion(questionId) {
-  let currentQuestion = questions[questionId];
+  let currentQuestion = findQuestionById(questionId);
 
   if (!currentQuestion) {
-    console.log(recentlyAddedAnswerId);
     currentQuestion = new Question(
       questionId,
       "Question " + questionId,
       [],
       recentlyAddedAnswerId
     );
-    questions[currentQuestionId] = currentQuestion;
+    questions.push(currentQuestion);
   }
 
   questionElement.innerText = currentQuestion.text;
@@ -103,7 +102,7 @@ function renderQuestion(questionId) {
 
 function handleBackButtonClick() {
   if (currentQuestionId !== 1) {
-    currentQuestionId = questions[currentQuestionId].previousAnswer;
+    currentQuestionId = findQuestionById(currentQuestionId).previousAnswer;
     renderQuestion(currentQuestionId);
   }
 }
@@ -128,11 +127,9 @@ function addQuestion() {
     return;
   }
 
-  questions[currentQuestionId].answers.push({
-    id: newAnswerId,
-    text: newAnswerText,
-    nextQuestion: nextQuestionId,
-  });
+  findQuestionById(currentQuestionId).answers.push(
+    new Answer(newAnswerId, newAnswerText, nextQuestionId)
+  );
 
   recentlyAddedAnswerId = currentQuestionId;
 
@@ -150,13 +147,13 @@ function showEditForm() {
   editForm.style.display = "block";
 
   if (currentQuestionId) {
-    questionText.value = questions[currentQuestionId].text;
+    questionText.value = findQuestionById(currentQuestionId).text;
   }
 }
 
 function editQuestion() {
   if (currentQuestionId) {
-    questions[currentQuestionId].text = questionText.value;
+    findQuestionById(currentQuestionId).text = questionText.value;
     renderQuestion(currentQuestionId);
     editForm.style.display = "none";
     alert("Question edited successfully");
@@ -173,23 +170,28 @@ function deleteQuestion() {
       alert("You cannot delete the root question.");
     }
 
-    const previousAnswer = questions[currentQuestionId].previousAnswer;
+    const currentQuestion = findQuestionById(currentQuestionId);
+    const previousAnswerId = currentQuestion.previousAnswer;
 
-    for (let answer in questions[currentQuestionId].answers) {
+    for (let answer in findQuestionById(previousAnswerId).answers) {
       if (
-        questions[previousAnswer].answers[answer].nextQuestion ===
+        findQuestionById(previousAnswerId).answers[answer].nextQuestion ===
         currentQuestionId
       ) {
-        delete questions[previousAnswer].answers[answer];
+        findQuestionById(previousAnswerId).answers.splice(answer, 1);
       }
     }
-    delete questions[currentQuestionId];
-    renderQuestion(previousAnswer || 1);
+
+    renderQuestion(previousAnswerId || 1);
   }
 }
 
 function handleDeleteButtonClick() {
   deleteQuestion();
+}
+
+function findQuestionById(id) {
+  return questions.find((question) => question.id === id);
 }
 
 function resetForm() {
