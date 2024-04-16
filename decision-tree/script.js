@@ -86,7 +86,9 @@ function renderQuestion(questionId) {
   currentQuestion.answers.forEach((answer) => {
     const button = document.createElement("button");
     button.textContent = answer.text;
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+
       currentQuestionId = answer.nextQuestion;
       renderQuestion(answer.nextQuestion);
     });
