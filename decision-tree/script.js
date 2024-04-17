@@ -63,16 +63,19 @@ function renderQuestion(currentQuestionId) {
 
   if (!currentQuestion) {
     alert("This answer does not have next question");
+    return;
   }
 
-  //Question element
-  questionElement.innerText = currentQuestion.text;
+  const { id, text, answers, previousAnswer } = currentQuestion;
 
-  questionElement.setAttribute("data-key", currentQuestion.id);
+  //Question element
+  questionElement.innerText = text;
+
+  questionElement.setAttribute("data-key", id);
   const addElement = document.createElement("button");
   addElement.textContent = "Add";
   addElement.classList.add("answer-button");
-  addElement.setAttribute("data-key", currentQuestion.id);
+  addElement.setAttribute("data-key", id);
   addElement.addEventListener("click", (event) => {
     event.stopPropagation();
     const chosenQuestionId = event.target.getAttribute("data-key");
@@ -81,7 +84,7 @@ function renderQuestion(currentQuestionId) {
   const editElement = document.createElement("button");
   editElement.textContent = "Edit";
   editElement.classList.add("answer-button");
-  editElement.setAttribute("data-key", currentQuestion.id);
+  editElement.setAttribute("data-key", id);
   editElement.addEventListener("click", (event) => {
     event.stopPropagation();
     const chosenQuestionId = event.target.getAttribute("data-key");
@@ -90,7 +93,7 @@ function renderQuestion(currentQuestionId) {
   const deleteElement = document.createElement("button");
   deleteElement.textContent = "Delete";
   deleteElement.classList.add("answer-button");
-  deleteElement.setAttribute("data-key", currentQuestion.id);
+  deleteElement.setAttribute("data-key", id);
   deleteElement.addEventListener("click", (event) => {
     event.stopPropagation();
     deleteQuestion(event.target.getAttribute("data-key"));
@@ -98,7 +101,7 @@ function renderQuestion(currentQuestionId) {
   const backElement = document.createElement("button");
   backElement.textContent = "Back";
   backElement.classList.add("back-button");
-  backElement.setAttribute("data-key", currentQuestion.id);
+  backElement.setAttribute("data-key", id);
   backElement.addEventListener("click", (event) => {
     event.stopPropagation();
     const chosenQuestionId = event.target.getAttribute("data-key");
@@ -114,11 +117,12 @@ function renderQuestion(currentQuestionId) {
   answersElement.innerHTML = "";
 
   currentQuestion.answers.forEach((answer) => {
+    const { id, text, nextQuestion } = answer;
     const answerContainer = document.createElement("div");
 
     const answerButton = document.createElement("button");
-    answerButton.textContent = answer.text;
-    answerButton.setAttribute("data-key", answer.nextQuestion);
+    answerButton.textContent = text;
+    answerButton.setAttribute("data-key", nextQuestion);
     answerButton.addEventListener("click", (event) => {
       event.stopPropagation();
       const nextQuestionId = event.target.getAttribute("data-key");
@@ -128,7 +132,7 @@ function renderQuestion(currentQuestionId) {
     const addButton = document.createElement("button");
     addButton.textContent = "Add";
     addButton.classList.add("answer-button");
-    addButton.setAttribute("data-key", answer.id);
+    addButton.setAttribute("data-key", id);
     addButton.addEventListener("click", (event) => {
       event.stopPropagation();
       const chosenId = event.target.getAttribute("data-key");
@@ -137,7 +141,7 @@ function renderQuestion(currentQuestionId) {
     const editButton = document.createElement("button");
     editButton.textContent = "Edit";
     editButton.classList.add("answer-button");
-    editButton.setAttribute("data-key", answer.id);
+    editButton.setAttribute("data-key", id);
     editButton.addEventListener("click", (event) => {
       event.stopPropagation();
       const chosenId = event.target.getAttribute("data-key");
@@ -146,7 +150,7 @@ function renderQuestion(currentQuestionId) {
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.classList.add("answer-button");
-    deleteButton.setAttribute("data-key", answer.id);
+    deleteButton.setAttribute("data-key", id);
 
     deleteButton.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -326,7 +330,7 @@ const showEditAnswerForm = (answerId, currentQuestionId) => {
   editAnswerForm.style.display = "block";
   addQuestionForm.style.display = "none";
 
-  answerEditText.value = findAnswerById(answerId, currentQuestionId).text;
+  answerEditText.value = findAnswerById(currentQuestionId, answerId).text;
 
   const handleSaveClick = () => {
     editAnswer(answerId, currentQuestionId);
