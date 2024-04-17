@@ -37,6 +37,8 @@ button {
   color: white;
   cursor: pointer;
   margin-right: 10px;
+  margin-bottom: 15px;
+  width: 30%;
 }
 button:hover {
   background-color: #0056b3;
@@ -58,4 +60,26 @@ input {
   border-radius: 4px;
   width: 100%;
   margin-bottom: 10px;
+}
+.answer-button {
+  background-color: lightgrey;
+  font-size: 10px;
+  width: fit-content;
+  border-radius: 8px;
+}
+.answer-button:hover {
+  background-color: grey;
+}
+.search-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+#search-button {
+  background-color: lightgrey;
+  width: fit-content;
+}
+#search-button:hover {
+  background-color: grey;
 }
