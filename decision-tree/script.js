@@ -47,12 +47,316 @@ const questions = [
   new Question(9, "You should cooking with family", [], 6),
 ];
 
+function findQuestionById(id) {
+  return questions.find((question) => question.id == id);
+}
+
+function findAnswerById(currentQuestionId, answerId) {
+  return findQuestionById(currentQuestionId).answers.find(
+    (answer) => answer.id == answerId
+  );
+}
+
+function renderQuestion(currentQuestionId) {
+  hideAllForms();
+  const currentQuestion = findQuestionById(currentQuestionId);
+
+  if (!currentQuestion) {
+    alert("This answer does not have next question");
+  }
+
+  //Question element
+  questionElement.innerText = currentQuestion.text;
+
+  questionElement.setAttribute("data-key", currentQuestion.id);
+  const addElement = document.createElement("button");
+  addElement.textContent = "Add";
+  addElement.classList.add("answer-button");
+  addElement.setAttribute("data-key", currentQuestion.id);
+  addElement.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const chosenQuestionId = event.target.getAttribute("data-key");
+    showAddForm(chosenQuestionId);
+  });
+  const editElement = document.createElement("button");
+  editElement.textContent = "Edit";
+  editElement.classList.add("answer-button");
+  editElement.setAttribute("data-key", currentQuestion.id);
+  editElement.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const chosenQuestionId = event.target.getAttribute("data-key");
+    showEditForm(chosenQuestionId);
+  });
+  const deleteElement = document.createElement("button");
+  deleteElement.textContent = "Delete";
+  deleteElement.classList.add("answer-button");
+  deleteElement.setAttribute("data-key", currentQuestion.id);
+  deleteElement.addEventListener("click", (event) => {
+    event.stopPropagation();
+    deleteQuestion(event.target.getAttribute("data-key"));
+  });
+  const backElement = document.createElement("button");
+  backElement.textContent = "Back";
+  backElement.classList.add("back-button");
+  backElement.setAttribute("data-key", currentQuestion.id);
+  backElement.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const chosenQuestionId = event.target.getAttribute("data-key");
+    handleBackButtonClick(chosenQuestionId);
+  });
+
+  questionElement.appendChild(backElement);
+  questionElement.appendChild(addElement);
+  questionElement.appendChild(editElement);
+  questionElement.appendChild(deleteElement);
+
+  //Answer element
+  answersElement.innerHTML = "";
+
+  currentQuestion.answers.forEach((answer) => {
+    const answerContainer = document.createElement("div");
+
+    const answerButton = document.createElement("button");
+    answerButton.textContent = answer.text;
+    answerButton.setAttribute("data-key", answer.nextQuestion);
+    answerButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const nextQuestionId = event.target.getAttribute("data-key");
+      renderQuestion(nextQuestionId);
+    });
+
+    const addButton = document.createElement("button");
+    addButton.textContent = "Add";
+    addButton.classList.add("answer-button");
+    addButton.setAttribute("data-key", answer.id);
+    addButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const chosenId = event.target.getAttribute("data-key");
+      showAddQuestionForm(chosenId, currentQuestionId);
+    });
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit";
+    editButton.classList.add("answer-button");
+    editButton.setAttribute("data-key", answer.id);
+    editButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const chosenId = event.target.getAttribute("data-key");
+      showEditAnswerForm(chosenId, currentQuestionId);
+    });
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.classList.add("answer-button");
+    deleteButton.setAttribute("data-key", answer.id);
+
+    deleteButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      deleteAnswer(event.target.getAttribute("data-key"), currentQuestionId);
+    });
+
+    answerContainer.appendChild(answerButton);
+    answerContainer.appendChild(addButton);
+    answerContainer.appendChild(editButton);
+    answerContainer.appendChild(deleteButton);
+    answersElement.appendChild(answerContainer);
+  });
+
+  if (currentQuestionId !== 1) {
+    backElement.style.display = "block";
+  } else {
+    backElement.style.display = "none";
+  }
+}
+
+function handleBackButtonClick(questionId) {
+  if (questionId !== 1) {
+    questionId = findQuestionById(questionId).previousAnswer;
+    renderQuestion(questionId);
+  }
+}
+
+function showAddForm(questionId) {
+  addForm.style.display = "block";
+  editForm.style.display = "none";
+  addQuestionForm.style.display = "none";
+
+  const handleAddAnswerClick = () => {
+    addAnswer(questionId);
+  };
+
+  addButton.addEventListener("click", handleAddAnswerClick);
+}
+
+function addAnswer(currentQuestionId) {
+  const newAnswerId = answerIdInput.value;
+  const newAnswerText = answerTextInput.value;
+
+  if (newAnswerId === "" || newAnswerText === "") {
+    alert("Please fill in all fields");
+    return;
+  }
+
+  const currentQuestion = findQuestionById(currentQuestionId);
+  for (let i = 0; i < currentQuestion.answers.length; i++) {
+    if (currentQuestion.answers[i].id == newAnswerId) {
+      alert("Answer already exists");
+      return;
+    }
+  }
+
+  currentQuestion.answers.push(new Answer(newAnswerId, newAnswerText, null));
+
+  renderQuestion(currentQuestionId);
+  addForm.style.display = "none";
+  resetForm();
+}
+
+function showEditForm(questionId) {
+  addForm.style.display = "none";
+  editForm.style.display = "block";
+  addQuestionForm.style.display = "none";
+
+  if (questionId) {
+    questionText.value = findQuestionById(questionId).text;
+  }
+
+  const handleSaveEditQuestionClick = (event) => {
+    event.stopPropagation();
+    editQuestion(questionId);
+  };
+
+  saveElement.addEventListener("click", handleSaveEditQuestionClick);
+}
+
+function editQuestion(questionId) {
+  if (questionId) {
+    findQuestionById(questionId).text = questionText.value;
+    renderQuestion(questionId);
+    editForm.style.display = "none";
+    alert("Question edited successfully");
+  }
+}
+
+function deleteQuestion(questionId) {
+  if (confirm("Are you sure you want to delete this question?") === true) {
+    if (findQuestionById(questionId).previousAnswer === null) {
+      alert("You cannot delete the root question.");
+    }
+
+    const currentQuestion = findQuestionById(questionId);
+    const previousAnswerId = currentQuestion.previousAnswer;
+
+    findQuestionById(previousAnswerId).answers = findQuestionById(
+      previousAnswerId
+    ).answers.filter((answer) => answer.nextQuestion != questionId);
+
+    renderQuestion(previousAnswerId || 1);
+  }
+}
+
+function resetForm() {
+  answerIdInput.value = "";
+  answerTextInput.value = "";
+  nextQuestionIdInput.value = "";
+  previousAnswerIdInput.value = "";
+  questionIdInput.value = "";
+  questionTextInput.value = "";
+}
+
+function hideAllForms() {
+  addForm.style.display = "none";
+  editForm.style.display = "none";
+  addQuestionForm.style.display = "none";
+  editAnswerForm.style.display = "none";
+}
+
+function showAddQuestionForm(answerId, currentQuestionId) {
+  addQuestionForm.style.display = "block";
+  editForm.style.display = "none";
+  addForm.style.display = "none";
+
+  const handleAddClick = () => {
+    addQuestion(answerId, currentQuestionId);
+  };
+
+  addQuestionButton.addEventListener("click", handleAddClick);
+}
+
+function addQuestion(answerId, currentQuestionId) {
+  const newQuestionId = questionIdInput.value;
+  const newQuestionText = questionTextInput.value;
+  const previousAnswerId = answerId;
+
+  if (newQuestionId === "" || newQuestionText === "") {
+    alert("Please fill in all fields");
+    return;
+  }
+
+  if (findQuestionById(newQuestionId)) {
+    alert("Question already exists");
+    return;
+  }
+
+  const currentAnswer = findAnswerById(currentQuestionId, answerId);
+  if (currentAnswer.nextQuestion) {
+    alert("This answer already has a next question");
+    return;
+  }
+
+  questions.push(
+    new Question(newQuestionId, newQuestionText, previousAnswerId)
+  );
+
+  currentAnswer.nextQuestion = newQuestionId;
+
+  alert("Question added successfully");
+}
+
+function deleteAnswer(answerId, currentQuestionId) {
+  const currentQuestion = findQuestionById(currentQuestionId);
+  if (confirm("Are you sure you want to delete this answer?") === true) {
+    currentQuestion.answers = currentQuestion.answers.filter(
+      (answer) => answer.id != answerId
+    );
+    renderQuestion(currentQuestionId || 1);
+  }
+}
+
+const showEditAnswerForm = (answerId, currentQuestionId) => {
+  addForm.style.display = "none";
+  editAnswerForm.style.display = "block";
+  addQuestionForm.style.display = "none";
+
+  answerEditText.value = findAnswerById(answerId, currentQuestionId).text;
+
+  const handleSaveClick = () => {
+    editAnswer(answerId, currentQuestionId);
+  };
+
+  saveEditAnswer.addEventListener("click", handleSaveClick);
+};
+
+function editAnswer(answerId, currentQuestionId) {
+  findAnswerById(currentQuestionId, answerId).text = answerEditText.value;
+  renderQuestion(currentQuestionId);
+  editForm.style.display = "none";
+  alert("Answer edited successfully");
+}
+
+function handleSearchButtonClick(event) {
+  event.stopPropagation();
+  const searchValue = searchInput.value;
+  const question = findQuestionById(searchValue);
+  if (question) {
+    alert(
+      "The question is: " + JSON.stringify(findQuestionById(searchValue).text)
+    );
+  } else {
+    alert("Question not found");
+  }
+}
+
 const questionElement = document.getElementById("question");
 const answersElement = document.getElementById("answers");
-const backButton = document.getElementById("back");
-const addElement = document.getElementById("add");
-const editElement = document.getElementById("edit");
-const deleteElement = document.getElementById("delete");
 const addForm = document.getElementById("add-form");
 const editForm = document.getElementById("edit-form");
 const addQuestionForm = document.getElementById("add-question-form");
@@ -76,279 +380,13 @@ const cancelEditAnswer = document.getElementById("cancel-edit-answer");
 const searchInput = document.getElementById("search");
 const searchButton = document.getElementById("search-button");
 
-let recentlyAddedAnswerId = 0;
-let currentQuestionId = 1;
-let chosenAnswerId = 0;
-
-function findQuestionById(id) {
-  return questions.find((question) => question.id == id);
-}
-
-function findAnswerById(id) {
-  return findQuestionById(currentQuestionId).answers.find(
-    (answer) => answer.id == id
-  );
-}
-
-function renderQuestion(questionId) {
-  hideAllForms();
-  let currentQuestion = findQuestionById(questionId);
-
-  if (!currentQuestion) {
-    alert("This answer does not have next question");
-  }
-
-  questionElement.innerText = currentQuestion.text;
-  answersElement.innerHTML = "";
-
-  currentQuestion.answers.forEach((answer) => {
-    const answerContainer = document.createElement("div");
-
-    const answerButton = document.createElement("button");
-    answerButton.textContent = answer.text;
-    answerButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      currentQuestionId = answer.nextQuestion;
-      renderQuestion(answer.nextQuestion);
-    });
-
-    const addButton = document.createElement("button");
-    addButton.textContent = "Add";
-    addButton.classList.add("answer-button");
-    addButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      chosenAnswerId = answer.id;
-      showAddQuestionForm();
-    });
-    const editButton = document.createElement("button");
-    editButton.textContent = "Edit";
-    editButton.classList.add("answer-button");
-    editButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      chosenAnswerId = answer.id;
-      showEditAnswerForm();
-    });
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.classList.add("answer-button");
-    deleteButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      chosenAnswerId = answer.id;
-      deleteAnswer();
-    });
-
-    answerContainer.appendChild(answerButton);
-    answerContainer.appendChild(addButton);
-    answerContainer.appendChild(editButton);
-    answerContainer.appendChild(deleteButton);
-    answersElement.appendChild(answerContainer);
-  });
-
-  if (currentQuestionId !== 1) {
-    backButton.style.display = "block";
-  } else {
-    backButton.style.display = "none";
-  }
-}
-
-function handleBackButtonClick(event) {
-  event.stopPropagation();
-
-  if (currentQuestionId !== 1) {
-    currentQuestionId = findQuestionById(currentQuestionId).previousAnswer;
-    renderQuestion(currentQuestionId);
-  }
-}
-
-function showAddForm() {
-  addForm.style.display = "block";
-  editForm.style.display = "none";
-  addQuestionForm.style.display = "none";
-}
-
-function addAnswer(event) {
-  event.stopPropagation();
-
-  const newAnswerId = answerIdInput.value;
-  const newAnswerText = answerTextInput.value;
-
-  if (newAnswerId === "" || newAnswerText === "") {
-    alert("Please fill in all fields");
-    return;
-  }
-
-  for (let i = 0; i < findQuestionById(currentQuestionId).answers.length; i++) {
-    if (findQuestionById(currentQuestionId).answers[i].id == newAnswerId) {
-      alert("Answer already exists");
-      return;
-    }
-  }
-
-  findQuestionById(currentQuestionId).answers.push(
-    new Answer(newAnswerId, newAnswerText, null)
-  );
-
-  recentlyAddedAnswerId = chosenAnswerId;
-
-  renderQuestion(currentQuestionId);
-  addForm.style.display = "none";
-  resetForm();
-}
-
-function handleAddButtonClick(event) {
-  event.stopPropagation();
-  showAddForm();
-}
-
-function showEditForm() {
-  addForm.style.display = "none";
-  editForm.style.display = "block";
-  addQuestionForm.style.display = "none";
-
-  if (currentQuestionId) {
-    questionText.value = findQuestionById(currentQuestionId).text;
-  }
-}
-
-function editQuestion() {
-  if (currentQuestionId) {
-    findQuestionById(currentQuestionId).text = questionText.value;
-    renderQuestion(currentQuestionId);
-    editForm.style.display = "none";
-    alert("Question edited successfully");
-  }
-}
-
-function handleEditButtonClick() {
-  showEditForm();
-}
-
-function deleteQuestion() {
-  if (confirm("Are you sure you want to delete this question?") === true) {
-    if (findQuestionById(currentQuestionId).previousAnswer === null) {
-      alert("You cannot delete the root question.");
-    }
-
-    const currentQuestion = findQuestionById(currentQuestionId);
-    const previousAnswerId = currentQuestion.previousAnswer;
-
-    findQuestionById(previousAnswerId).answers = findQuestionById(
-      previousAnswerId
-    ).answers.filter((answer) => answer.nextQuestion !== currentQuestionId);
-
-    renderQuestion(previousAnswerId || 1);
-  }
-}
-
-function handleDeleteButtonClick(event) {
-  event.stopPropagation();
-
-  deleteQuestion();
-}
-
-function resetForm() {
-  answerIdInput.value = "";
-  answerTextInput.value = "";
-  nextQuestionIdInput.value = "";
-  previousAnswerIdInput.value = "";
-  questionIdInput.value = "";
-  questionTextInput.value = "";
-}
-
-function hideAllForms() {
-  addForm.style.display = "none";
-  editForm.style.display = "none";
-  addQuestionForm.style.display = "none";
-  editAnswerForm.style.display = "none";
-}
-
-function showAddQuestionForm() {
-  addQuestionForm.style.display = "block";
-  editForm.style.display = "none";
-  addForm.style.display = "none";
-}
-
-function addQuestion() {
-  const newQuestionId = questionIdInput.value;
-  const newQuestionText = questionTextInput.value;
-  const previousAnswerId = chosenAnswerId;
-
-  console.log(chosenAnswerId);
-
-  if (newQuestionId === "" || newQuestionText === "") {
-    alert("Please fill in all fields");
-    return;
-  }
-
-  if (findQuestionById(newQuestionId)) {
-    alert("Question already exists");
-    return;
-  }
-
-  if (findAnswerById(chosenAnswerId).nextQuestion) {
-    alert("This answer already has a next question");
-    return;
-  }
-
-  findAnswerById(chosenAnswerId).nextQuestion = newQuestionId;
-
-  questions.push(
-    new Question(newQuestionId, newQuestionText, previousAnswerId)
-  );
-
-  alert("Question added successfully");
-}
-
-function deleteAnswer() {
-  if (confirm("Are you sure you want to delete this answer?") === true) {
-    findQuestionById(currentQuestionId).answers = findQuestionById(
-      currentQuestionId
-    ).answers.filter((answer) => answer.id !== chosenAnswerId);
-
-    renderQuestion(currentQuestionId || 1);
-  }
-}
-
-const showEditAnswerForm = () => {
-  addForm.style.display = "none";
-  editAnswerForm.style.display = "block";
-  addQuestionForm.style.display = "none";
-
-  answerEditText.value = findAnswerById(chosenAnswerId).text;
-};
-
-function editAnswer() {
-  findAnswerById(chosenAnswerId).text = answerEditText.value;
-  renderQuestion(currentQuestionId);
-  editForm.style.display = "none";
-  alert("Answer edited successfully");
-}
-
-function handleSearchButtonClick(event) {
-  event.stopPropagation();
-  const searchValue = searchInput.value;
-  alert(
-    "The question is: " + JSON.stringify(findQuestionById(searchValue).text)
-  );
-}
-
-backButton.addEventListener("click", handleBackButtonClick);
-addElement.addEventListener("click", handleAddButtonClick);
-addButton.addEventListener("click", addAnswer);
 cancelAddButton.addEventListener("click", (event) => {
   event.stopPropagation();
   addForm.style.display = "none";
 });
-editElement.addEventListener("click", handleEditButtonClick);
-saveElement.addEventListener("click", editQuestion);
 cancelEditButton.addEventListener("click", (event) => {
   event.stopPropagation();
   editForm.style.display = "none";
-});
-deleteElement.addEventListener("click", handleDeleteButtonClick);
-addQuestionButton.addEventListener("click", (event) => {
-  event.stopPropagation();
-  addQuestion();
 });
 cancelAddQuestion.addEventListener("click", (event) => {
   event.stopPropagation();
@@ -358,7 +396,6 @@ cancelEditAnswer.addEventListener("click", (event) => {
   event.stopPropagation();
   editAnswerForm.style.display = "none";
 });
-saveEditAnswer.addEventListener("click", editAnswer);
 searchButton.addEventListener("click", handleSearchButtonClick);
 
 renderQuestion(1);

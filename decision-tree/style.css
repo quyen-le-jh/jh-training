@@ -2,7 +2,7 @@ body {
   font-family: Arial, sans-serif;
 }
 .container {
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -38,7 +38,7 @@ button {
   cursor: pointer;
   margin-right: 10px;
   margin-bottom: 15px;
-  width: 30%;
+  width: 20%;
 }
 button:hover {
   background-color: #0056b3;
@@ -65,6 +65,7 @@ input {
   background-color: lightgrey;
   font-size: 10px;
   width: fit-content;
+  height: fit-content;
   border-radius: 8px;
 }
 .answer-button:hover {
@@ -82,4 +83,18 @@ input {
 }
 #search-button:hover {
   background-color: grey;
+}
+#question {
+  display: flex;
+  gap: 10px;
+}
+.back-button {
+  background-color: grey;
+  width: fit-content;
+  border-radius: 8px;
+  font-size: 10px;
+  height: fit-content;
+}
+.back-button:hover {
+  background-color: lightgrey;
 }
